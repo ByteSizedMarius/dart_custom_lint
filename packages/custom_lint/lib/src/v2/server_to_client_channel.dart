@@ -106,13 +106,23 @@ class SocketCustomLintServerToClientChannel {
   }
 
   /// Initializes and waits for the client to start
-  Future<void> init({required bool debug}) async {
-    _processFuture = _startProcess(debug: debug);
+  Future<void> init() async {
+    _processFuture = _startProcess();
     final process = await _processFuture;
     // No process started, likely because no plugin were detected. We can stop here.
     if (process == null) return;
 
-    final out = process.stdout.map(utf8.decode);
+    var out = process.stdout.map(utf8.decode);
+    // Let's not log the VM service prints unless in watch mode
+    if (!_server.watchMode) {
+      out = out.skipWhile(
+        (element) =>
+            element.startsWith('The Dart VM service is listening on') ||
+            element.startsWith(
+              'The Dart DevTools debugger and profiler is available at:',
+            ),
+      );
+    }
 
     out.listen((event) => _server.handlePrint(event, isClientMessage: true));
     process.stderr
@@ -132,18 +142,17 @@ class SocketCustomLintServerToClientChannel {
   /// Updates the context roots on the client
   Future<AnalysisSetContextRootsResult> setContextRoots(
     AnalysisSetContextRootsParams contextRoots,
-  ) async {
+  ) {
     _contextRoots = contextRoots;
-    return AnalysisSetContextRootsResult();
+    // TODO: implement setContextRoots
+    throw UnimplementedError();
   }
 
   /// Encapsulates all the logic for initializing the process,
   /// without setting up the connection.
   ///
   /// Will throw if the process fails to start.
-  Future<Process?> _startProcess({
-    required bool debug,
-  }) async {
+  Future<Process?> _startProcess() async {
     final tempDir = _tempDirectory =
         Directory.systemTemp.createTempSync('custom_lint_client');
 
@@ -155,7 +164,7 @@ class SocketCustomLintServerToClientChannel {
         final process = await Process.start(
           Platform.resolvedExecutable,
           [
-            if (_server.watchMode ?? debug) '--enable-vm-service=0',
+            if (_server.watchMode) '--enable-vm-service=0',
             join('lib', 'custom_lint_client.dart'),
             _serverSocket.address.host,
             _serverSocket.port.toString(),
@@ -248,12 +257,7 @@ void main(List<String> args) async {
   Future<CustomLintResponse> sendCustomLintRequest(
     CustomLintRequest request,
   ) async {
-    final matchingResponse = _responses.firstWhere(
-      (e) => e.id == request.id,
-      orElse: () => throw StateError(
-        'No response for request $request',
-      ),
-    );
+    final matchingResponse = _responses.firstWhere((e) => e.id == request.id);
 
     await _channel.sendJson(request.toJson());
 

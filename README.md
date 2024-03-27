@@ -25,7 +25,7 @@
   - [Using our custom lint package in an application](#using-our-custom-lint-package-in-an-application)
   - [Enabling/disabling and configuring lints](#enablingdisabling-and-configuring-lints)
   - [Obtaining the list of lints in the CI](#obtaining-the-list-of-lints-in-the-ci)
-  - [Using the Dart debugger and enabling hot-reload](#using-the-dart-debugger-and-enabling-hot-reload)
+  - [Using the Dart debugger](#using-the-dart-debugger)
   - [Testing your plugins](#testing-your-plugins)
     - [Testing lints](#testing-lints)
     - [Testing quick fixes and assists](#testing-quick-fixes-and-assists)
@@ -95,9 +95,6 @@ To create a custom lint, you will need two things:
 - create a `lib/<my_package_name>.dart` file in your project with the following:
 
   ```dart
-  import 'package:analyzer/error/listener.dart';
-  import 'package:custom_lint_builder/custom_lint_builder.dart';
-  
   // This is the entrypoint of our custom linter
   PluginBase createPlugin() => _ExampleLinter();
 
@@ -131,7 +128,7 @@ To create a custom lint, you will need two things:
         // "node" exposes metadata about the variable declaration. We could
         // check "node" to show the lint only in some conditions.
 
-        // This line tells custom_lint to render a warning at the location of "node".
+        // This line tells custom_lint to render a waring at the location of "node".
         // And the warning shown will use our `code` variable defined above as description.
         reporter.reportErrorForNode(code, node);
       });
@@ -241,26 +238,9 @@ $ dart run custom_lint
 
 If you are working on a Flutter project, run `flutter pub run custom_lint` instead.
 
-### Using the Dart debugger and enabling hot-reload
+### Using the Dart debugger
 
-By default, custom_lint does enable hot-reload or give you the necessary
-information to start the debugger. This is because most users don't need those,
-and only lint authors do.
-
-If you wish to debug lints, you'll have to update your `analysis_options.yaml` as followed:
-
-```yaml
-analyzer:
-  plugins:
-    - custom_lint
-
-custom_lint:
-  debug: true
-  # Optional, will cause custom_lint to log its internal debug information
-  verbose: true
-```
-
-Then, to debug plugins in custom_lint, you need to connect to plugins using "attach"
+To debug plugins in custom_lint, you need to connect to plugins using "attach"
 mode in your IDE (`cmd+shift+p` + `Debug: attach to Dart process` in VSCode).
 
 When using this command, you will need a VM service URI provided by custom_lint.

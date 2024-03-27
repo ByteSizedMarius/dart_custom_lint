@@ -1,12 +1,3 @@
-## 0.6.4 - 2024-03-16
-
-- Improve error message to attempt debugging a certain bug
-
-## 0.6.3 - 2024-03-16
-
-- Fixed Unimplemented error when running `pub get`.
-- Hot-reload and debug mode is now disabled by default.
-
 ## 0.6.2 - 2024-02-19
 
 - `custom_lint --format json` no-longer outputs non-JSON logs (thanks to @kzrnm)
