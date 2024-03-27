@@ -322,8 +322,8 @@ class _CustomLintAnalysisConfigs {
     return {
       for (final rule in rules)
         rule.code: [
-          if (includeBuiltInLints) IgnoreCode(),
           ...rule.getFixes(),
+          if (includeBuiltInLints) IgnoreCode(),
         ],
     };
   }
@@ -866,8 +866,8 @@ class _ClientAnalyzerPlugin extends analyzer_plugin.ServerPlugin {
       return;
     }
 
-    final file = resourceProvider.getFile(path);
-    final resolver = analysisContext.createResolverForFile(file);
+    final resolver =
+        analysisContext.createResolverForFile(resourceProvider.getFile(path));
     if (resolver == null) return;
 
     final lintsBeforeExpectLint = <AnalysisError>[];
@@ -954,7 +954,7 @@ class _ClientAnalyzerPlugin extends analyzer_plugin.ServerPlugin {
             CustomAnalyzerConverter().convertAnalysisErrors(
               allAnalysisErrors,
               lineInfo: resolver.lineInfo,
-              options: analysisContext.getAnalysisOptionsForFile(file),
+              options: analysisContext.analysisOptions,
             ),
           ).toNotification(),
         ),

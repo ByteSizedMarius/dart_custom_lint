@@ -96,8 +96,7 @@ Future<void> _runServer(
       await runner.initialize;
 
       final log = CliLogger();
-      final progress =
-          format == OutputFormatEnum.json ? null : log.progress('Analyzing');
+      final progress = log.progress('Analyzing');
 
       await _runPlugins(
         runner,
@@ -135,12 +134,12 @@ Future<void> _runServer(
 Future<void> _runPlugins(
   CustomLintRunner runner, {
   required Logger log,
+  required Progress progress,
   required bool reload,
   required Directory workingDirectory,
   required bool fatalInfos,
   required bool fatalWarnings,
   required OutputFormatEnum format,
-  Progress? progress,
 }) async {
   final lints = await runner.getLints(reload: reload);
 

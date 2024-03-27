@@ -1,7 +1,3 @@
-## 0.6.2 - 2024-02-19
-
-- Fix null exception when using `TypeChecker.isSuperTypeOf` (thanks to @charlescyt)
-
 ## 0.6.1 - 2024-02-14
 
 - Exported `NodeLintRegistry`

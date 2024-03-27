@@ -61,12 +61,9 @@ class CliLogger implements Logger {
   Progress progress(String message) {
     _cancelProgress();
 
-    final progress = _LineOnFinishProgress(
-      ansi.useAnsi
-          ? AnsiProgress(ansi, message)
-          : SimpleProgress(this, message),
-      log: this,
-    );
+    final progress = ansi.useAnsi
+        ? AnsiProgress(ansi, message)
+        : SimpleProgress(this, message);
     _currentProgress = progress;
     return progress;
   }
@@ -74,30 +71,4 @@ class CliLogger implements Logger {
   @override
   @Deprecated('This method will be removed in the future')
   void flush() {}
-}
-
-class _LineOnFinishProgress implements Progress {
-  const _LineOnFinishProgress(this.impl, {required this.log});
-
-  final CliLogger log;
-  final Progress impl;
-
-  @override
-  Duration get elapsed => impl.elapsed;
-
-  @override
-  String get message => impl.message;
-
-  @override
-  void cancel() {
-    impl.cancel();
-  }
-
-  @override
-  void finish({String? message, bool showTiming = false}) {
-    impl.finish(message: message, showTiming: showTiming);
-
-    // Separate progress from results
-    log.stdout('');
-  }
 }
