@@ -323,7 +323,7 @@ class _CustomLintAnalysisConfigs {
       for (final rule in rules)
         rule.code: [
           ...rule.getFixes(),
-          if (includeBuiltInLints) IgnoreCode(),
+          //if (includeBuiltInLints) IgnoreCode(),
         ],
     };
   }
